@@ -1,37 +1,20 @@
-import { FormControl, InputLabel } from '@mui/material'
-import { useState } from 'react'
-import { BootstrapInput } from './styles'
+import { ErrorMessage, FormControl, Input, InputLabel } from './styles'
 
 interface Props {
   name: string
   label: string
-  value: string
-  onChange?: (e: any) => void
+  type?: string
+  error?: string
 }
 
-const Input = ({ name, label, value, onChange }: Props) => {
-  const [userInput, setUserInput] = useState(value)
-
+const InputField = ({ name, label, type, error }: Props) => {
   return (
-    <FormControl variant="standard" style={{ width: '100%' }}>
-      <InputLabel shrink htmlFor={name}>
-        {label}
-      </InputLabel>
-      <BootstrapInput
-        fullWidth
-        value={userInput}
-        id={name}
-        name={name}
-        onChange={e => {
-          setUserInput(e.target.value)
-          if (onChange !== undefined) {
-            onChange(e)
-          }
-        }}
-        placeholder={label}
-      />
+    <FormControl>
+      <InputLabel htmlFor={name}>{label}</InputLabel>
+      <Input id={name} type={type || 'text'} name={name} placeholder={label} />
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </FormControl>
   )
 }
 
-export default Input
+export default InputField

@@ -1,23 +1,18 @@
-import { Grid } from '@mui/material'
 import Header from '../../components/header'
 import TodoForm from './components/todoForm'
 import TodoList from './containers/todoList'
+import { Container, Grid } from './styled-components/styles'
 
 const TodoPage = () => {
   return (
     <>
       <Header />
-      <Grid
-        container
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Grid item lg={6}>
+      <Container>
+        <Grid>
           <TodoForm />
           <TodoList />
         </Grid>
-      </Grid>
+      </Container>
     </>
   )
 }

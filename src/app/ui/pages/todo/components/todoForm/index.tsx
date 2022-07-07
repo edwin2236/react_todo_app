@@ -1,60 +1,39 @@
-import { Grid } from '@mui/material'
-import { useState } from 'react'
+import { createRef, useState } from 'react'
 import { addTask } from 'src/app/domain/redux/task/taskSlice'
 import { AddTaskUsecase } from 'src/app/domain/usecases/addTask.usecase'
-import Input from 'src/app/ui/components/input'
+import InputField from 'src/app/ui/components/input'
 import { useAppDispatch } from 'src/app/ui/hooks/hooks'
 import container from 'src/inversify.config'
-import { BtnAdd, Form, InputGroup } from '../../styled-components/styles'
+import { Button, Form } from './styles'
 
 const TodoForm = () => {
+  const [error, setError] = useState('')
+  const formRef = createRef<HTMLFormElement>()
   const dispatch = useAppDispatch()
   const useCase: AddTaskUsecase = new AddTaskUsecase(
     container.get('ITaskRepository')
   )
-  const [form, setForm] = useState({
-    title: '',
-  })
-
-  const onChange = (e: any) => {
-    const { name, value } = e.target
-    setForm({
-      ...form,
-      [name]: value,
-    })
-  }
 
   const onSubmit = async (e: any) => {
     e.preventDefault()
 
-    if (form.title !== '') {
-      await useCase.execute(form.title).then(response => {
-        setForm({ title: '' })
+    if (e.target.title?.value !== '' && e.target.title) {
+      await useCase.execute(e.target.title.value.trim()).then(response => {
+        console.log(formRef.current)
+
+        formRef.current?.reset()
         dispatch(addTask(response))
+        setError('')
       })
+    } else {
+      setError('This field is required')
     }
   }
 
   return (
-    <Form onSubmit={onSubmit}>
-      <Grid
-        container
-        direction="row"
-        justifyContent="space-between"
-        alignItems="flex-end"
-      >
-        <InputGroup>
-          <Input
-            label="Write new todo"
-            name="title"
-            value={form.title}
-            onChange={onChange}
-          />
-        </InputGroup>
-        <BtnAdd type="submit">
-          <span className="material-symbols-outlined">save</span>
-        </BtnAdd>
-      </Grid>
+    <Form onSubmit={onSubmit} ref={formRef}>
+      <InputField label="Write new todo" name="title" error={error} />
+      <Button type="submit">Add</Button>
     </Form>
   )
 }

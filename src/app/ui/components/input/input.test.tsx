@@ -1,21 +1,29 @@
 import '@testing-library/jest-dom'
 import { render, screen, userEvent } from 'src/tests/test-utils'
-import Input from './index'
+import InputField from './index'
 
-describe('Input', () => {
-  it('should create an instance', () => {
-    render(<Input name="test" label="email" value="" />)
+it('should create an instance', () => {
+  render(<InputField name="test" label="email" type="email" />)
 
-    expect(screen.getByText('email')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('email')).toBeInTheDocument()
-  })
+  expect(screen.getByText('email')).toBeInTheDocument()
+  expect(screen.getByPlaceholderText('email')).toBeInTheDocument()
+})
 
-  it('should change input value', () => {
-    render(<Input name="test" label="email" value="" />)
+it('should change input value', async () => {
+  render(<InputField name="test" label="email" />)
+  const user = userEvent.setup()
 
-    const input = screen.getByPlaceholderText('email')
-    expect(input).toBeInTheDocument()
-    userEvent.type(input, 'my value')
-    expect(input).toHaveValue('my value')
-  })
+  const input = screen.getByPlaceholderText('email')
+  expect(input).toBeInTheDocument()
+  await user.type(input, 'new task')
+
+  expect(input).toHaveValue('new task')
+})
+
+it('should show error message', async () => {
+  render(<InputField name="test" label="email" error="error" />)
+
+  const input = screen.getByPlaceholderText('email')
+  expect(input).toBeInTheDocument()
+  expect(screen.getByText('error')).toBeInTheDocument()
 })
